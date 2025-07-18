@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | TimberArt Nepal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var paymentMethodSelect = document.getElementById("paymentMethod");
+
+            // Hide all payment forms initially
+            document.querySelectorAll(".payment-form").forEach(function(form) {
+                form.style.display = "none";
+            });
+
+            // Show the correct form when a payment method is selected
+            paymentMethodSelect.addEventListener("change", function() {
+                var selectedMethod = paymentMethodSelect.value;
+                
+                document.querySelectorAll(".payment-form").forEach(function(form) {
+                    form.style.display = "none";
+                });
+
+                if (selectedMethod === "Visa Card") {
+                    document.getElementById("visaForm").style.display = "block";
+                } else if (selectedMethod === "eSewa") {
+                    document.getElementById("esewaForm").style.display = "block";
+                } else if (selectedMethod === "Credit/Debit Card") {
+                    document.getElementById("creditForm").style.display = "block";
+                } else if (selectedMethod === "Bank Transfer") {
+                    document.getElementById("bankTransferForm").style.display = "block";
+                } else if (selectedMethod === "Mobile Payment") {
+                    document.getElementById("mobilePaymentForm").style.display = "block";
+                } else if (selectedMethod === "Cash on Delivery") {
+                    document.getElementById("codForm").style.display = "block";
+                }
+            });
+
+            // Handle form submission
+            document.getElementById("checkoutForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                var paymentMethod = paymentMethodSelect.value;
+                var name = document.getElementById("name").value;
+                var address = document.getElementById("address").value;
+                var message = "Order Details:\nName: " + name + "\nAddress: " + address + "\nPayment Method: " + paymentMethod;
+
+                if (paymentMethod === "Visa Card") {
+                    var cardNumber = document.getElementById("card-number").value;
+                    var expiryDate = document.getElementById("expiry-date").value;
+                    var cvv = document.getElementById("cvv").value;
+                    message += "\nCard Number: " + cardNumber + "\nExpiry Date: " + expiryDate + "\nCVV: " + cvv;
+                } else if (paymentMethod === "eSewa") {
+                    var esewaId = document.getElementById("esewa-id").value;
+                    message += "\neSewa ID: " + esewaId;
+                } else if (paymentMethod === "Credit/Debit Card") {
+                    var cardNumber = document.getElementById("card-number").value;
+                    var expiryDate = document.getElementById("expiry-date").value;
+                    var cvv = document.getElementById("cvv").value;
+                    message += "\nCard Number: " + cardNumber + "\nExpiry Date: " + expiryDate + "\nCVV: " + cvv;
+                } else if (paymentMethod === "Bank Transfer") {
+                    var accountNumber = document.getElementById("bank-account").value;
+                    var bankName = document.getElementById("bank-name").value;
+                    var branch = document.getElementById("branch").value;
+                    message += "\nBank Name: " + bankName + "\nAccount Number: " + accountNumber + "\nBranch: " + branch;
+                } else if (paymentMethod === "Mobile Payment") {
+                    var mobileNumber = document.getElementById("mobile-number").value;
+                    var mobileProvider = document.getElementById("mobile-provider").value;
+                    message += "\nMobile Number: " + mobileNumber + "\nMobile Provider: " + mobileProvider;
+                } else if (paymentMethod === "Cash on Delivery") {
+                    message += "\nPayment Method: Cash on Delivery";
+                }
+
+                // Send order details to the server (you need to implement this)
+                // For example, using fetch API
+                fetch("/order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        address: address,
+                        paymentMethod: paymentMethod,
+                        orderDetails: message
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.href = "confirmation.html";
+                })
+                .catch(error => {
+                    console.error("Error placing order:", error);
+                    alert("There was an error placing your order. Please try again.");
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- Include Header and Navbar -->
+    <header class="top-header py-2 bg-dark text-white">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-phone-alt me-2"></i> +977-9876543210
+                <i class="fas fa-envelope ms-3 me-2"></i> info@timberartnepal.com
+            </div>
+            <div>
+                <a href="wishlist.html" class="text-white me-3"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="account.html" class="text-white me-3"><i class="fas fa-user"></i> My Account</a>
+                <a href="cart.html" class="text-white"><i class="fas fa-shopping-cart"></i> Cart</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/timberartlogo.png" alt="TimberArt Nepal" height="70">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="aboutus.html">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contactus.html">Contact</a></li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search products...">
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <section class="checkout py-5">
+        <div class="container">
+            <h2 class="text-center">Checkout</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <form id="checkoutForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" value="Tamanna Shrestha">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" rows="3"> Kathmandu, Nepal</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-control" id="paymentMethod">
+                                <option>Credit/Debit Card</option>
+                                <option>eSewa</option>
+                                <option>Bank Transfer</option>
+                                <option>Mobile Payment</option>
+                                <option>Cash on Delivery</option>
+                            </select>
+                        </div>
+
+                        <!-- Visa Card Payment Form -->
+                        <div id="visaForm" class="payment-form">
+                            <div class="form-group">
+                                <label for="card-number">Card Number</label>
+                                <input type="text" class="form-control" id="card-number" placeholder="Enter your card number" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiry-date">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiry-date" placeholder="MM/YY" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" class="form-control" id="cvv" placeholder="Enter CVV" required>
+                            </div>
+                        </div>
+
+                        <!-- eSewa Payment Form -->
+                        <div id="esewaForm" class="payment-form">
+                            <div class="form-group">
+                                <label for="esewa-id">eSewa ID</label>
+                                <input type="text" class="form-control" id="esewa-id" placeholder="Enter your eSewa ID" required>
+                            </div>
+                        </div>
+
+                        <!-- Credit/Debit Card Payment Form -->
+                        <div id="creditForm" class="payment-form">
+                            <div class="form-group">
+                                <label for="card-number">Card Number</label>
+                                <input type="text" class="form-control" id="card-number" placeholder="Enter your card number" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiry-date">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiry-date" placeholder="MM/YY" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" class="form-control" id="cvv" placeholder="Enter CVV" required>
+                            </div>
+                        </div>
+
+                        <!-- Bank Transfer Form -->
+                        <div id="bankTransferForm" class="payment-form">
+                            <div class="form-group">
+                                <label for="bank-name">Bank Name</label>
+                                <input type="text" class="form-control" id="bank-name" placeholder="Enter your bank name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="bank-account">Account Number</label>
+                                <input type="text" class="form-control" id="bank-account" placeholder="Enter your account number" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="branch">Branch</label>
+                                <input type="text" class="form-control" id="branch" placeholder="Enter your branch name" required>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Payment Form -->
+                        <div id="mobilePaymentForm" class="payment-form">
+                            <div class="form-group">
+                                <label for="mobile-number">Mobile Number</label>
+                                <input type="text" class="form-control" id="mobile-number" placeholder="Enter your mobile number" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mobile-provider">Mobile Provider</label>
+                                <select class="form-control" id="mobile-provider" required>
+                                    <option>eSewa</option>
+                                    <option>IME Pay</option>
+                                    <option>KTSPay</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Cash on Delivery -->
+                        <div id="codForm" class="payment-form">
+                            <p>Choose Cash on Delivery if you prefer to pay upon receiving your order.</p>
+                        </div>
+
+                        <a href="confirmation.html" class="btn btn-success">Place Order</a>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h5>Order Summary</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">Wood Carvings - NPR 3,500</li>
+                        <li class="list-group-item">Metal Statues - NPR 4,500</li>
+                    </ul>
+                    <h5>Total: NPR 8,000</h5>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>&copy; 2024 TimberArt Nepal. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
